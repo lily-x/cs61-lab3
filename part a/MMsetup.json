@@ -1,5 +1,6 @@
 {
-    "person": [{
+    "person": [
+    {
         "personID": 100,
         "fname": "Jasper",
         "lname": "Johns"
@@ -43,7 +44,7 @@
         "personID": 304,
         "fname": "Roy",
         "lname": "Lichtenstein"
-    }
+    },
     {
         "personID": 400,
         "fname": "Georgia",
@@ -61,7 +62,8 @@
     }
     ],
 
-    "author": [{
+    "author": [
+    {
         "personID": 100,
         "email": "jasper@sydney.org",
         "address": "42 Wallaby Way",
@@ -91,7 +93,8 @@
         "personID": [400, 401, 402]
     },
 
-    "reviewer": [{
+    "reviewer": [
+    {
         "personID": 300,
         "affiliation": "Fauvism",
         "email": "henri@matisse.com",
@@ -129,7 +132,7 @@
     ],
 
     "RICode": [
-        {
+    {
         "RICodeID": 1,
         "interest": "Agricultural engineering"
     },
@@ -275,7 +278,7 @@
     },
     {
         "RICodeID": 37,
-        "interest": "Transportation engineering",
+        "interest": "Transportation engineering"
     },
     {
         "RICodeID": 38,
@@ -951,8 +954,6 @@
         "contribution": 7,
         "recommendation": 1,
         "dateReceived": "2016-02-17"
-    },
+    }
     ]
-
-
 }
