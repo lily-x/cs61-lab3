@@ -1,0 +1,222 @@
+
+{
+    "person": [{
+        "personID": 100,
+        "fname": "Jasper",
+        "lname": "Johns"
+    },
+
+    {
+        "personID": 101,
+        "fname": "Piet",
+        "lname": "Mondrian"
+    },
+
+    {
+        "personID": 102, 
+        "fname": "Mark",
+        "lname": "Rothko"
+    },
+
+    {
+        "personID": 300,
+        "fname": "Henri",
+        "lname": "Matisse"
+    },
+
+    {
+        "personID": 301,
+        "fname": "Otto",
+        "lname": "Dix"
+    },
+
+    {
+        "personID": 302,
+        "fname": "Marc",
+        "lname": "Chagall"
+    },
+
+    {
+        "personID": 303,
+        "fname": "Edward",
+        "lname": "Hopper"
+    },
+
+    {
+        "personID": 304,
+        "fname": "Roy",
+        "lname": "Lichtenstein"
+    }
+
+    {
+        "personID": 400,
+        "fname": "Georgia",
+        "lname": "O'Keeffe"
+    },
+
+    {
+        "personID": 401,
+        "fname": "Andy",
+        "lname": "Warhol"
+    },
+
+    {
+        "personID": 402,
+        "fname": "Wassily",
+        "lname": "Kandinsky"
+    }
+    ],
+
+    "author": {
+        "personID": 100,
+        "email": "jasper@sydney.org",
+        "address": "42 Wallaby Way",
+        "affiliation": "Sydney"
+    },
+
+    "editor": {
+        "personID": [400, 401, 402]
+    },
+
+    "reviewer": {
+        "personID": 300,
+        "affiliation": "Stanford University",
+        "email": "person@stanford.edu",
+        "reviewer_status": "active",
+        "ricodeID": [ 10, 20, 30 ]
+    },
+
+    "RICode": {
+        "RICodeID": 40,
+        "interest": "monkeys"
+    },
+
+    "issue": {
+        "publicationYear": 2015,
+        "periodNumber": 1,
+        "datePrinted": "02-17-2015"
+    },
+
+    "manuscript": [{
+        "manuscriptID": 1,
+        "authorID": 100,
+        "editorID": 400,
+        "title": "Creating plant hybrids",
+        "status": "received",
+        "ricodeID": 20,
+        "numPages": "None",
+        "startingPage": "Null",
+        "issueOrder": "Null",
+        "dateReceived": "01-22-2015",
+        "dateSentForReview": "Null",
+        "dateAccepted": "Null",
+        "issue_publicationYear": "Null",
+        "issue_periodNumber": "Null",
+        "seconaryAuthor": [ "Mickey Mouse", "Donald Duck", "Mr. Beans" ]
+    },
+
+    {
+        "manuscriptID": 2,
+        "authorID": 101,
+        "editorID": 401,
+        "title": "Creating plant hybrids",
+        "status": "rejected",
+        "ricodeID": 20,
+        "numPages": "None",
+        "startingPage": "Null",
+        "issueOrder": "Null",
+        "dateReceived": "06-21-2017",
+        "dateSentForReview": "Null",
+        "dateAccepted": "Null",
+        "issue_publicationYear": "Null",
+        "issue_periodNumber": "Null",
+        "seconaryAuthor": [ "Mickey Mouse", "Donald Duck", "Mr. Beans" ]
+    },
+
+    {
+        "manuscriptID": 3,
+        "authorID": 101,
+        "editorID": 400,
+        "title": "Creating plant hybrids",
+        "status": "underReview",
+        "ricodeID": 20,
+        "numPages": "None",
+        "startingPage": "Null",
+        "issueOrder": "Null",
+        "dateReceived": "06-21-2017",
+        "dateSentForReview": "Null",
+        "dateAccepted": "Null",
+        "issue_publicationYear": "Null",
+        "issue_periodNumber": "Null",
+        "seconaryAuthor": [ "Mickey Mouse", "Donald Duck", "Mr. Beans" ]
+    },
+
+    {
+        "manuscriptID": 4,
+        "authorID": 102,
+        "editorID": 402,
+        "title": "Creating plant hybrids",
+        "status": "accepted",
+        "ricodeID": 20,
+        "numPages": "None",
+        "startingPage": "Null",
+        "issueOrder": "Null",
+        "dateReceived": "06-21-2017",
+        "dateSentForReview": "Null",
+        "dateAccepted": "Null",
+        "issue_publicationYear": "Null",
+        "issue_periodNumber": "Null",
+        "seconaryAuthor": [ "Mickey Mouse", "Donald Duck", "Mr. Beans" ]
+    },
+
+    {
+        "manuscriptID": 5,
+        "authorID": 101,
+        "editorID": 401,
+        "title": "Creating plant hybrids",
+        "status": "scheduled",
+        "ricodeID": 20,
+        "numPages": "None",
+        "startingPage": "Null",
+        "issueOrder": "Null",
+        "dateReceived": "06-21-2017",
+        "dateSentForReview": "Null",
+        "dateAccepted": "Null",
+        "issue_publicationYear": "Null",
+        "issue_periodNumber": "Null",
+        "seconaryAuthor": [ "Mickey Mouse", "Donald Duck", "Mr. Beans" ]
+    },
+
+    {
+        "manuscriptID": 6,
+        "authorID": 102,
+        "editorID": 400,
+        "title": "Creating plant hybrids",
+        "status": "published",
+        "ricodeID": 20,
+        "numPages": "None",
+        "startingPage": "Null",
+        "issueOrder": "Null",
+        "dateReceived": "06-21-2017",
+        "dateSentForReview": "Null",
+        "dateAccepted": "Null",
+        "issue_publicationYear": "Null",
+        "issue_periodNumber": "Null",
+        "seconaryAuthor": [ "Mickey Mouse", "Donald Duck", "Mr. Beans" ]
+    }
+
+    ],
+
+    "feedback": {
+        "manuscriptID": 10,
+        "reviewerID": 300,
+        "appropriateness": 10,
+        "clarity": 8,
+        "methodology": 8,
+        "contribution": 7,
+        "recommendation": 1,
+        "dateReceived": "05-17-2015"
+    }
+
+
+}

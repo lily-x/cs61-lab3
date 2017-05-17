@@ -1,0 +1,27 @@
+{
+  "_id": "No-Sushi-Mondays",
+  "title": "Why I never eat sushi on Mondays",
+  "date": "2017-02-13T21:27:22.104Z",
+  "author": {
+    "name": "Tony Stark",
+    "title": "CEO",
+    "company": "Stark Industries"
+  },
+  "text": "Do you ever wonder just how fresh fish could be when ...",
+  "tags": [
+    "sushi",
+    "Mondays",
+    "nausea",
+    "Vibrio parahaemolyticus"
+  ],
+  "comments": [
+    {
+      "name": "fishMonger",
+      "comment": "What do you know about ..."
+    },
+    {
+      "name": "Dr.Nick",
+      "comment": "What's the big deal, a little ..."
+    }
+  ]
+}
