@@ -1,5 +1,14 @@
 db = db.getSiblingDB('Team17DB');
 
+db.person.remove({});
+db.author.remove({});
+db.editor.remove({});
+db.reviewer.remove({});
+db.RICode.remove({});
+db.issue.remove({});
+db.feedback.remove({});
+db.manuscript.remove({});
+
 db.createCollection("person");
 db.createCollection("author");
 db.createCollection("editor");
@@ -9,11 +18,13 @@ db.createCollection("issue");
 db.createCollection("feedback");
 db.createCollection("manuscript");
 
+// insert person
+
 db.person.insertMany([
   {
-    "personID": 100,
-    "fname": "Jasper",
-    "lname": "Johns"
+      "personID": 100,
+      "fname": "Jasper",
+      "lname": "Johns"
   },
   {
       "personID": 101,
@@ -71,6 +82,8 @@ db.person.insertMany([
       "lname": "Kandinsky"
   }
 ]);
+
+// insert author
 
 db.author.insertMany([
   {
@@ -99,6 +112,8 @@ db.author.insertMany([
   }
 ]);
 
+// insert editor
+
 db.editor.insertMany([
   {
       "personID": 400
@@ -111,68 +126,7 @@ db.editor.insertMany([
   }
 ]);
 
-db.person.insertMany([
-  {
-    "personID": 100,
-    "fname": "Jasper",
-    "lname": "Johns"
-  },
-  {
-      "personID": 101,
-      "fname": "Piet",
-      "lname": "Mondrian"
-  },
-  {
-      "personID": 102,
-      "fname": "Mark",
-      "lname": "Rothko"
-  },
-  {
-      "personID": 103,
-      "fname": "Willem",
-      "lname": "de Kooning"
-  },
-  {
-      "personID": 300,
-      "fname": "Henri",
-      "lname": "Matisse"
-  },
-  {
-      "personID": 301,
-      "fname": "Otto",
-      "lname": "Dix"
-  },
-  {
-      "personID": 302,
-      "fname": "Marc",
-      "lname": "Chagall"
-  },
-  {
-      "personID": 303,
-      "fname": "Edward",
-      "lname": "Hopper"
-  },
-  {
-      "personID": 304,
-      "fname": "Roy",
-      "lname": "Lichtenstein"
-  },
-  {
-      "personID": 400,
-      "fname": "Georgia",
-      "lname": "O'Keeffe"
-  },
-  {
-      "personID": 401,
-      "fname": "Andy",
-      "lname": "Warhol"
-  },
-  {
-      "personID": 402,
-      "fname": "Wassily",
-      "lname": "Kandinsky"
-  }
-]);
+// insert reviewer
 
 db.reviewer.insertMany([
   {
@@ -211,6 +165,8 @@ db.reviewer.insertMany([
       "ricodeID": [ 10, 20, 30 ]
   }
 ]);
+
+// insert RICode
 
 db.RICode.insertMany([
   {
@@ -711,6 +667,8 @@ db.RICode.insertMany([
   }
 ]);
 
+// insert issue
+
 db.issue.insertMany([
   {
       "publicationYear": 2015,
@@ -734,6 +692,8 @@ db.issue.insertMany([
   }
 ]);
 
+// insert manuscript
+
 db.manuscript.insertMany([
   {
       "manuscriptID": 1,
@@ -750,7 +710,7 @@ db.manuscript.insertMany([
       "dateAccepted": "Null",
       "issue_publicationYear": "Null",
       "issue_periodNumber": "Null",
-      "seconaryAuthor": [ "Marcel Duchamp", "Hart Crane", "Tatyana Grosman" ]
+      "secondaryAuthor": [ "Marcel Duchamp", "Hart Crane", "Tatyana Grosman" ]
   },
   {
       "manuscriptID": 2,
@@ -767,7 +727,7 @@ db.manuscript.insertMany([
       "dateAccepted": "Null",
       "issue_publicationYear": "Null",
       "issue_periodNumber": "Null",
-      "seconaryAuthor": [ "Pablo Picasso", "Kazimir Malevich", "Wassily Kandinsky" ]
+      "secondaryAuthor": [ "Pablo Picasso", "Kazimir Malevich", "Wassily Kandinsky" ]
   },
   {
       "manuscriptID": 3,
@@ -784,7 +744,7 @@ db.manuscript.insertMany([
       "dateAccepted": "Null",
       "issue_publicationYear": "Null",
       "issue_periodNumber": "Null",
-      "seconaryAuthor": [ "Friedrich Nietzsche", "Milton Avery", "John Graham" ]
+      "secondaryAuthor": [ "Friedrich Nietzsche", "Milton Avery", "John Graham" ]
   },
   {
       "manuscriptID": 4,
@@ -801,7 +761,7 @@ db.manuscript.insertMany([
       "dateAccepted": "2015-06-21",
       "issue_publicationYear": "Null",
       "issue_periodNumber": "Null",
-      "seconaryAuthor": [ "Robert Rauschenberg", "John Cage" ]
+      "secondaryAuthor": [ "Robert Rauschenberg", "John Cage" ]
   },
   {
       "manuscriptID": 5,
@@ -818,7 +778,7 @@ db.manuscript.insertMany([
       "dateAccepted": "2015-01-24",
       "issue_publicationYear": "2015",
       "issue_periodNumber": "3",
-      "seconaryAuthor": [ "Jackson Pollock", "Frank Kline", "Mark Rothko" ]
+      "secondaryAuthor": [ "Jackson Pollock", "Frank Kline", "Mark Rothko" ]
   },
   {
       "manuscriptID": 6,
@@ -835,7 +795,7 @@ db.manuscript.insertMany([
       "dateAccepted": "2013-",
       "issue_publicationYear": "2015",
       "issue_periodNumber": "1",
-      "seconaryAuthor": [ "Barnett Newman" ]
+      "secondaryAuthor": [ "Barnett Newman", "Pablo Picasso" ]
   },
   {
       "manuscriptID": 7,
@@ -852,9 +812,11 @@ db.manuscript.insertMany([
       "dateAccepted": "2014-03-21",
       "issue_publicationYear": "2015",
       "issue_periodNumber": "2",
-      "seconaryAuthor": [ "Georges Braque" ]
+      "secondaryAuthor": [ "Georges Braque" ]
   }
 ]);
+
+// insert feedback
 
 db.feedback.insertMany([
   {
