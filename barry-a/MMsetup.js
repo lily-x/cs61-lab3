@@ -1,18 +1,18 @@
 db = db.getSiblingDB('Team17DB');
 
 db.person.remove({});
-db.author.remove({});
-db.editor.remove({});
-db.reviewer.remove({});
+// db.author.remove({});
+// db.editor.remove({});
+// db.reviewer.remove({});
 db.RICode.remove({});
 db.issue.remove({});
 db.feedback.remove({});
 db.manuscript.remove({});
 
 db.createCollection("person");
-db.createCollection("author");
-db.createCollection("editor");
-db.createCollection("reviewer");
+// db.createCollection("author");
+// db.createCollection("editor");
+// db.createCollection("reviewer");
 db.createCollection("RICode");
 db.createCollection("issue");
 db.createCollection("feedback");
@@ -24,113 +24,62 @@ db.person.insertMany([
   {
       "personID": 100,
       "fname": "Jasper",
-      "lname": "Johns"
-  },
-  {
-      "personID": 101,
-      "fname": "Piet",
-      "lname": "Mondrian"
-  },
-  {
-      "personID": 102,
-      "fname": "Mark",
-      "lname": "Rothko"
-  },
-  {
-      "personID": 103,
-      "fname": "Willem",
-      "lname": "de Kooning"
-  },
-  {
-      "personID": 300,
-      "fname": "Henri",
-      "lname": "Matisse"
-  },
-  {
-      "personID": 301,
-      "fname": "Otto",
-      "lname": "Dix"
-  },
-  {
-      "personID": 302,
-      "fname": "Marc",
-      "lname": "Chagall"
-  },
-  {
-      "personID": 303,
-      "fname": "Edward",
-      "lname": "Hopper"
-  },
-  {
-      "personID": 304,
-      "fname": "Roy",
-      "lname": "Lichtenstein"
-  },
-  {
-      "personID": 400,
-      "fname": "Georgia",
-      "lname": "O'Keeffe"
-  },
-  {
-      "personID": 401,
-      "fname": "Andy",
-      "lname": "Warhol"
-  },
-  {
-      "personID": 402,
-      "fname": "Wassily",
-      "lname": "Kandinsky"
-  }
-]);
-
-// insert author
-
-db.author.insertMany([
-  {
-      "personID": 100,
+      "lname": "Johns",
+      "type": "author",
       "email": "jasper@sydney.org",
       "address": "42 Wallaby Way",
       "affiliation": "Pop Art"
   },
   {
       "personID": 101,
+      "fname": "Piet",
+      "lname": "Mondrian",
+      "type": "author",
       "email": "piet@mondrian.com",
       "address": "17 Incident Road",
       "affiliation": "De Stijl"
   },
   {
       "personID": 102,
+      "fname": "Mark",
+      "lname": "Rothko",
+      "type": "author",
       "email": "mark@rothko.com",
       "address": "49 Fifth Avenue",
       "affiliation": "Color Field"
   },
   {
       "personID": 103,
+      "type": "author",
+      "fname": "Willem",
+      "lname": "de Kooning",
       "email": "willem@dekooning.com",
       "address": "12 East Hampton",
       "affiliation": "Abstract Expressionism"
-  }
-]);
-
-// insert editor
-
-db.editor.insertMany([
-  {
-      "personID": 400
   },
   {
-      "personID": 401
+      "personID": 400,
+      "fname": "Georgia",
+      "lname": "O'Keeffe",
+      "type": "editor",
   },
   {
-      "personID": 402
-  }
-]);
-
-// insert reviewer
-
-db.reviewer.insertMany([
+      "personID": 401,
+      "fname": "Andy",
+      "lname": "Warhol",
+      "type": "editor",
+  },
+  {
+      "personID": 402,
+      "fname": "Wassily",
+      "lname": "Kandinsky",
+      "type": "editor",
+  },
   {
       "personID": 300,
+      "fname": "Henri",
+      "lname": "Matisse",
+      "type": "reviewer",
       "affiliation": "Fauvism",
       "email": "henri@matisse.com",
       "reviewer_status": "active",
@@ -138,6 +87,9 @@ db.reviewer.insertMany([
   },
   {
       "personID": 301,
+      "fname": "Otto",
+      "lname": "Dix",
+      "type": "reviewer",
       "affiliation": "New Objectivity",
       "email": "otto@dix.com",
       "reviewer_status": "active",
@@ -145,6 +97,9 @@ db.reviewer.insertMany([
   },
   {
       "personID": 302,
+      "fname": "Marc",
+      "lname": "Chagall",
+      "type": "reviewer",
       "affiliation": "Surrealism",
       "email": "marc@chagall.com",
       "reviewer_status": "active",
@@ -152,6 +107,9 @@ db.reviewer.insertMany([
   },
   {
       "personID": 303,
+      "fname": "Edward",
+      "lname": "Hopper",
+      "type": "reviewer",
       "affiliation": "Realism",
       "email": "edward@hopper.com",
       "reviewer_status": "active",
@@ -159,6 +117,9 @@ db.reviewer.insertMany([
   },
   {
       "personID": 304,
+      "fname": "Roy",
+      "lname": "Lichtenstein",
+      "type": "reviewer",
       "affiliation": "Pop Art",
       "email": "roy@lichtenstein.com",
       "reviewer_status": "active",
