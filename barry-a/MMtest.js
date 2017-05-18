@@ -40,4 +40,10 @@ let fname = person.fname;
 let lname = person.lname;
 print(" The person's name is " + fname + " " + lname + ".");
 
+print("\nFind count of feedbacks that are filled in (without null values):");
+
+//assume if there's no recommendation, there's no feedback
+let count = db.feedback.find( {"recommendation": {$ne:null} } ).count()
+print(" " + count + " manuscripts are filled in.");
+
 print("\nFinish");
