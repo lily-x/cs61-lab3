@@ -1,13 +1,13 @@
-db = db.getSiblingDB('Team17DB');
+db = db.getSiblingDB('Team28DB');
 
-db.person.remove({});
+db.person.drop();
 // db.author.remove({});
 // db.editor.remove({});
 // db.reviewer.remove({});
-db.RICode.remove({});
-db.issue.remove({});
-db.feedback.remove({});
-db.manuscript.remove({});
+db.RICode.drop();
+db.issue.drop();
+db.feedback.drop();
+db.manuscript.drop();
 
 db.createCollection("person");
 // db.createCollection("author");
