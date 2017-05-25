@@ -1,22 +1,25 @@
+// Barry Yang and Lily Xu
+// CS 61 Lab 2a
+// May 21, 2017
+
+// Test queries for the JERK research journal manuscript data management system. 
+// MongoDB schema implementation
+
+
 db = db.getSiblingDB('Team28DB');
 
 db.person.drop();
-// db.author.remove({});
-// db.editor.remove({});
-// db.reviewer.remove({});
 db.RICode.drop();
 db.issue.drop();
 db.feedback.drop();
 db.manuscript.drop();
 
 db.createCollection("person");
-// db.createCollection("author");
-// db.createCollection("editor");
-// db.createCollection("reviewer");
 db.createCollection("RICode");
 db.createCollection("issue");
 db.createCollection("feedback");
 db.createCollection("manuscript");
+
 
 // insert person
 
@@ -127,7 +130,8 @@ db.person.insertMany([
   }
 ]);
 
-// insert RICode
+
+// insert RICodes
 
 db.RICode.insertMany([
   {
@@ -653,7 +657,8 @@ db.issue.insertMany([
   }
 ]);
 
-// insert manuscript
+
+// insert manuscripts
 
 db.manuscript.insertMany([
   {
@@ -776,6 +781,7 @@ db.manuscript.insertMany([
       "secondaryAuthor": [ "Georges Braque" ]
   }
 ]);
+
 
 // insert feedback
 

@@ -1,11 +1,19 @@
+// Barry Yang and Lily Xu
+// CS 61 Lab 2a
+// May 21, 2017
+
+// Test queries for the JERK research journal manuscript data management system. 
+// MongoDB schema implementation
+
+
 db = db.getSiblingDB("Team28DB");
 
-print("Start\n");
+print("Begin tests. \n");
 
 print("\nFind specific manuscript number 2:");
 printjson(db.manuscript.findOne( {"manuscriptID": 2} ));
 
-print("\nNo Reviewer found:");
+print("\nNo reviewer found:");
 printjson(db.feedback.findOne( {"manuscriptID": 2, "reviewerID": 500} ));
 
 print("\nFind all manuscripts with Pablo Picasso as a secondary author:");
@@ -14,7 +22,7 @@ while( cursor.hasNext() ){
   printjson( cursor.next() );
 }
 
-print("\nFind all editors, order in reverse personID:");
+print("\nFind all editors, ordered by decrementing personID:");
 cursor = db.person.find( {"type": "editor"} ).sort( {"personID": -1} )
 while( cursor.hasNext() ){
   printjson( cursor.next() );
@@ -29,11 +37,11 @@ print(" "+db.feedback.findOne( {"manuscriptID": 2, "reviewerID": 300} ).dateRece
 print("\nCount how many editors are in the system:");
 print(" There are " + db.person.count( {"type": "editor"} ) + " editor(s) in the person table");
 
-print("\nWhat is the string of the RICode for manuscript number 2:");
+print("\nFind the area of interest name of the RICode for manuscript number 2:");
 let RIC_string = db.RICode.findOne( {"RICodeID":db.manuscript.findOne( {"manuscriptID": 2} ).ricodeID} ).interest;
 print(" "+RIC_string);
 
-print("\nFind first and last name of author for manuscript 2 :");
+print("\nFind the first and last name of the author of manuscript 2 :");
 let manuscript = db.manuscript.findOne( {"manuscriptID": 2} );
 let person = db.person.findOne( {"personID":manuscript.authorID} );
 let fname = person.fname;
@@ -42,8 +50,8 @@ print(" The person's name is " + fname + " " + lname + ".");
 
 print("\nFind count of feedbacks that are filled in (without null values):");
 
-//assume if there's no recommendation, there's no feedback
+// assume if there's no recommendation, there's no feedback
 let count = db.feedback.find( {"recommendation": {$ne:null} } ).count()
 print(" " + count + " manuscripts are filled in.");
 
-print("\nFinish");
+print("\nTests completed. ");
