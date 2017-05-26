@@ -17,11 +17,12 @@ coll = db.person
 #   pprint.pprint(person)
 
 
-result = coll.find_one( {"personID": 300, "type": "author"})
+result = coll.find( {"type": "editor"})
 
+for x in result:
+    print str(x)
 
-
-print("person is " + str(result))
+# print("person is " + str(result))
 
 
 

@@ -31,7 +31,7 @@ def find_one(db, collection, query):
 def find(db, collection, query):
     client = db.get_client()
 
-    cursor = client[collection].find()
+    cursor = client[collection].find(query)
 
     return cursor
 
@@ -149,11 +149,11 @@ def login(db, user_id):
         print("  Address:    " + address)
 
         # execute login
-        # db.change_user_id(int(user_id))
-        # db.change_user_type('author')
-        # db.log_on()
-        #
-        # status_author(db, user_id)
+        db.change_user_id(int(user_id))
+        db.change_user_type('author')
+        db.log_on()
+
+        status_author(db, user_id)
 
         return
 
@@ -171,11 +171,11 @@ def login(db, user_id):
         print("  Last name:  " + lname)
 
         # execute login
-        # db.change_user_id(int(user_id))
-        # db.change_user_type('editor')
-        # db.log_on()
-        #
-        # status_editor(db, user_id)
+        db.change_user_id(int(user_id))
+        db.change_user_type('editor')
+        db.log_on()
+
+        status_editor(db, user_id)
 
         return
 
@@ -193,12 +193,12 @@ def login(db, user_id):
         print("  Last name:  " + lname)
 
         # execute login
-        # db.change_user_id(int(user_id))
-        # db.change_user_type('reviewer')
-        # db.log_on()
+        db.change_user_id(int(user_id))
+        db.change_user_type('reviewer')
+        db.log_on()
 
         # TODO: everything should be limited to manuscripts assigned to that reviewer
-        # status_reviewer(db, user_id)
+        status_reviewer(db, user_id)
 
         return
 
@@ -238,7 +238,7 @@ def get_next_id(db, collection):
     client = db.get_client()
     coll = client[collection]
 
-    for item in coll.find().sort("personID", -1).limit(1):
+    for item in coll.find().sort(collection + "ID", -1).limit(1):
         return item.get("personID") + 1
 
 
@@ -286,42 +286,49 @@ def process_author(db, tokens):
 
         now = datetime.datetime.now()
 
-        title       = tokens[1]
-        affiliation = tokens[2]
-        RICode      = tokens[3]
+        manuscriptID = get_next_id(db, "manuscript")
+        authorID     = db.get_user_id()
+        title        = tokens[1]
+        affiliation  = tokens[2]
+        RICode       = tokens[3]
 
         # assign an editor to manuscript
-        query = ("SELECT personID FROM editor;")
-        cursor.execute(query)
+        query = {"type": "editor"}
+        cursor = find(db, "person", query)
 
         # compile list of possible editors
         editors_array = []
 
-        for row in cursor:
-            for col in row:
-                if(col > 0):
-                    editors_array.append(col)
+        for item in cursor:
+            editors_array.append(item.get("personID"))
 
         # randomly pick an editor
         editor_id = random.choice(editors_array)
 
+        # secondary authors (if any)
+        secondary_authors = tokens[4:]
 
-        add_manuscript = ("INSERT INTO manuscript "
-                          "(author_personID,editor_personID,title,status,ricodeID,numPages,"
-                          "startingPage,issueOrder,dateReceived,dateSentForReview,dateAccepted,"
-                          "issue_publicationYear,issue_periodNumber) "
-                          "VALUES (%(author_personID)s, %(editor_personID)s, %(title)s, %(status)s, %(ricodeID)s, NULL, NULL, NULL, NOW(), NULL, NULL, NULL, NULL)")
 
-        data_author = {
-            'author_personID': db.user_id,
-            'editor_personID': editor_id,
-            'title': title,
-            'status': 'received',
-            'ricodeID': RICode,
-        }
+        query = { "manuscriptID": manuscriptID,
+                  "authorID": authorID,
+                  "editorID": editor_id,
+                  "title": title,
+                  "status": "underReview",
+                  "ricodeID": RICode,
+                  "numPages": None,
+                  "startingPage": None,
+                  "issueOrder": None,
+                  "dateReceived": "2014-03-21",
+                  "dateSentForReview": None,
+                  "dateAccepted": None,
+                  "issue_publicationYear": None,
+                  "issue_periodNumber": None,
+                  "secondaryAuthor": secondary_authors
+              }
 
-        manuscript_id = insert_query(db, add_manuscript, data_author)
+        insert(db, "manuscript", query)
 
+        # TODO: fix this
         update_affiliation = ("UPDATE author SET affiliation = %s WHERE personID = %s;")
 
         insert_query(db, update_affiliation, (affiliation, db.user_id))
@@ -331,23 +338,14 @@ def process_author(db, tokens):
               "  Manuscript SUBMITTED on " + now.strftime("%Y-%m-%d") + " \n")
 
 
-        # add secondary authors (if any)
-        # i = 1
-        # num_secondary_authors = len(tokens) - 4
-        #
-        # while i <= num_secondary_authors:
-        #     add_SA, data_SA = insert_secondaryAuthors(manuscript_id, tokens[i+3], i)
-        #     insert_query(db, add_SA, data_SA)
-        #     i += 1
-
-
     # immediately remove manuscript, regardless of status
     elif command == 'retract':
-        manuscript_num = tokens[1]
+        manuscriptID = int(tokens[1])
+        authorID = db.get_user_id()
 
         # ensure that author can only retract his/her own manuscripts
-        query = "SELECT manuscriptID, author_personID FROM manuscript WHERE author_personID = " +  str(db.user_id) + " AND manuscriptID = " + str(manuscript_num) + ';'
-        result = get_single_query(db, query)
+        query = { "manuscriptID": manuscriptID, "authorID": authorID }
+        result = find_one(db, "manuscript", person)
 
         if not result:
             print("Sorry, you are not the author of this manuscript.")
@@ -608,52 +606,53 @@ def status_query_return(db, query):
 
 
 def status_author(db, author_id):
-    query = "SELECT count FROM authorNumSubmitted WHERE personID = " +  str(author_id) + ';'
-    print("{} manuscripts submitted".format(status_query_return(db, query)))
+    # query = "SELECT count FROM authorNumSubmitted WHERE personID = " +  str(author_id) + ';'
+    # print("{} manuscripts submitted".format(status_query_return(db, query)))
+    #
+    # query = "SELECT count FROM authorNumUnderReview WHERE personID = " +  str(author_id) + ';'
+    # print("{} manuscripts under review".format(status_query_return(db, query)))
+    #
+    # query = "SELECT count FROM authorNumRejected WHERE personID = " +  str(author_id) + ';'
+    # print("{} manuscripts rejected".format(status_query_return(db, query)))
+    #
+    # query = "SELECT count FROM authorNumAccepted WHERE personID = " +  str(author_id) + ';'
+    # print("{} manuscripts accepted".format(status_query_return(db, query)))
+    #
+    # query = "SELECT count FROM authorNumTypeset WHERE personID = " +  str(author_id) + ';'
+    # print("{} manuscripts typeset".format(status_query_return(db, query)))
+    #
+    # query = "SELECT count FROM authorNumScheduled WHERE personID = " +  str(author_id) + ';'
+    # print("{} manuscripts scheduled".format(status_query_return(db, query)))
+    #
+    # query = "SELECT count FROM authorNumPublished WHERE personID = " +  str(author_id) + ';'
+    # print("{} manuscripts published\n".format(status_query_return(db, query)))
 
-    query = "SELECT count FROM authorNumUnderReview WHERE personID = " +  str(author_id) + ';'
-    print("{} manuscripts under review".format(status_query_return(db, query)))
+    query = { "authorID": author_id }
 
-    query = "SELECT count FROM authorNumRejected WHERE personID = " +  str(author_id) + ';'
-    print("{} manuscripts rejected".format(status_query_return(db, query)))
-
-    query = "SELECT count FROM authorNumAccepted WHERE personID = " +  str(author_id) + ';'
-    print("{} manuscripts accepted".format(status_query_return(db, query)))
-
-    query = "SELECT count FROM authorNumTypeset WHERE personID = " +  str(author_id) + ';'
-    print("{} manuscripts typeset".format(status_query_return(db, query)))
-
-    query = "SELECT count FROM authorNumScheduled WHERE personID = " +  str(author_id) + ';'
-    print("{} manuscripts scheduled".format(status_query_return(db, query)))
-
-    query = "SELECT count FROM authorNumPublished WHERE personID = " +  str(author_id) + ';'
-    print("{} manuscripts published\n".format(status_query_return(db, query)))
-
-    query = "SELECT status, manuscriptID, title FROM manuscript WHERE author_personID = {} ORDER BY status, manuscriptID".format(author_id)
     display_manuscripts(db, query)
 
 
 def status_editor(db, editor_id):
-    query = "SELECT status, manuscriptID, title FROM manuscript WHERE editor_personID = {} ORDER BY status, manuscriptID".format(editor_id)
+    query = { "editorID": editor_id }
+
     display_manuscripts(db, query)
 
 
 def status_reviewer(db, reviewer_id):
-    query = "SELECT status, manuscriptID, title FROM manuscriptWReviewers WHERE reviewer_personID = {}".format(reviewer_id)
+    query = { "reviewerID": reviewerID }
+
     display_manuscripts(db, query)
 
 
 def display_manuscripts(db, query):
-    result = submit_query_return(db, query)
+    result = find(db, "manuscript", query)
 
     if result:
         print("Manuscript detail: ")
-        rows = result.strip().split('\n')
-        for row in rows:
-            cols         = row.strip().split('|')
-            status       = cols[0]
-            manuscriptID = cols[1]
-            title        = cols[2]
+        for row in result:
+            status       = row.get("status")
+            manuscriptID = row.get("manuscriptID")
+            title        = row.get("title")
             print("   ID {} -- status: {}: '{}' ".format(manuscriptID, status, title))
     else:
         print("You have no manuscripts at this time.")
