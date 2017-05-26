@@ -1,10 +1,17 @@
-user_id = 34
-random_num = 4
+import pprint
+from pymongo import MongoClient
+# from bson.objectid import ObjectId
 
-query = "Table 'byang_db.view_as430' doesn't exist"
-print query[-13:]
+client = MongoClient()
 
-#query = "UPDATE reviewer SET reviewer_status = 'resigned' WHERE personID = " + str(db.user_id) + ';'
+db = client['Team28DB']
+coll = db.manuscript
 
-# query = 'UPDATE credential SET pword = AES_ENCRYPT("{}",@master_key) WHERE personID = {};'.format(str(random_num), str(user_id))
-# print query
+print(coll.find_one( {"manuscriptID": 1} ).get("title"))
+
+# print(db.collection_names(include_system_collections=False))
+
+arr = []
+for obj in coll.find():
+    arr.append(obj['manuscriptID'])
+print arr
