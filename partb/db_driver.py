@@ -30,9 +30,6 @@ if __name__ == "__main__":
         try:
             parse_input(db, s)
 
-        except mysql.connector.Error as e:        # catch SQL errors
-            print("SQL Error: {0}".format(e.msg))
-
         except:                                   # anything else
             print("Unexpected error: {0}".format(sys.exc_info()[0]))
             traceback.print_exc()

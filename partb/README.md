@@ -24,13 +24,7 @@ To run the front-end application, execute `db_driver.py` by entering the followi
 python db_driver.py
 ```
 
-The system will prompt for a master key, used to encrypt passwords. To avoid using encryption, change the following line in `db_driver.py`
-```
-db = Database(SERVER, USERNAME, PASSWORD, DATABASE, confidential=True)
-```
-to read `confidential=False`.
-
-From there, the user may type in an indefinite number of commands, which are explained below. At any point, the user may type 'q' or 'quit' to exit the management system.
+The user may then type in any valid command, which are explained below. The program will continue to run indefinitely until the user inputs 'q' or 'quit' to exit the management system.
 
 
 # Commands
@@ -130,17 +124,3 @@ accept|<manuscriptID>|<appropriateness>|<clarity>|<methodology>|<contribution>
 - For extra, inserted data cannot be used
 
 
-# Extra credit
-
-### Password authentication
-Upon starting the system, the user is prompted to enter a master key. This key can be any string.
-
-All newly registered users will be required to enter a password, which is stored in the database under the "credential" table. The passwords are encrypted in the server using `AES_ENCRYPT` and `AES_DECRYPT`. Subsequently, the user will be required to enter their password each time upon logging in.
-
-
-### Authorization using `GRANT`
-Upon registration, a new user is created in the system. The user's name will be Team17_x, where x is the personID of the new user. Several permissions are granted to the user. In the comments are what grant authorization is given for the extra credit, although additional permissions were given in order for the rest of the database front-end to work (ideally, all queries should be rewritten such that it's in line with the grants or makes sense in real life)
-
-Once a user logs into the system, their credentials are inputted into the system, and they will reconnect with the database with their new credentials.
-
-When a reviewer resigns, a randomly generated number will be inputted as a new password, and they will be locked out of the system. All their prior information is preserved.

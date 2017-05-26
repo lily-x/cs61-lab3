@@ -82,6 +82,9 @@ def parse_input(db, string):
     # register new user
     elif tokens[0] == 'register' and len(tokens) > 1:
         register(db, tokens)
+    # log off user
+    elif tokens[0] == 'logoff':
+        db.log_off()
     # logged in, so process according to current user
     elif db.is_logged_in():
         if db.get_user_type() == 'author':
