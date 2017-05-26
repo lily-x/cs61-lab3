@@ -12,6 +12,7 @@ import random
 
 # TODO: add "insert new issue" as a test query
 
+
 def insert(db, collection, query):
     client = db.get_client()
 
@@ -28,12 +29,23 @@ def find_one(db, collection, query):
 
     return cursor
 
+
 def find(db, collection, query):
     client = db.get_client()
 
-    cursor = client[collection].find(query)
+    cursor = client[collection].find( query )
 
     return cursor
+
+
+# update a single document
+def update(db, collection, select, query):
+    client = db.get_client()
+
+    cursor = client[collection].update_one( select, query )
+
+    return cursor
+
 
 def remove(db, collection, query):
     result = db.collection.delete_many( query )
@@ -274,12 +286,11 @@ def register_reviewer(db, fname, lname, email, affiliation, *ricodes):
 
 def process_author(db, tokens):
     command = tokens[0]
-
-    cursor = db.get_cursor()
+    authorID = db.get_user_id()
 
     if command == 'status':
-        print("Manuscript statuses for user ID {}: \n".format(db.user_id))
-        status_author(db, db.user_id)
+        print("Manuscript statuses for user ID {}: \n".format(authorID))
+        status_author(db, authorID)
 
     # submit manuscript to system
     elif command == 'submit':
@@ -287,18 +298,16 @@ def process_author(db, tokens):
         now = datetime.datetime.now()
 
         manuscriptID = get_next_id(db, "manuscript")
-        authorID     = db.get_user_id()
         title        = tokens[1]
         affiliation  = tokens[2]
         RICode       = tokens[3]
 
         # assign an editor to manuscript
-        query = {"type": "editor"}
+        query = { "type": "editor" }
         cursor = find(db, "person", query)
 
         # compile list of possible editors
         editors_array = []
-
         for item in cursor:
             editors_array.append(item.get("personID"))
 
@@ -328,10 +337,9 @@ def process_author(db, tokens):
 
         insert(db, "manuscript", query)
 
-        # TODO: fix this
-        update_affiliation = ("UPDATE author SET affiliation = %s WHERE personID = %s;")
-
-        insert_query(db, update_affiliation, (affiliation, db.user_id))
+        query_select = { "personID": authorID }
+        query = { "affiliation": affiliation }
+        update(db, "person", query_select, query)
 
         print("Submitted and updated:\n"
               "  Manuscript ID is " + str(manuscript_id) + "\n"
@@ -341,7 +349,6 @@ def process_author(db, tokens):
     # immediately remove manuscript, regardless of status
     elif command == 'retract':
         manuscriptID = int(tokens[1])
-        authorID = db.get_user_id()
 
         # ensure that author can only retract his/her own manuscripts
         query = { "manuscriptID": manuscriptID, "authorID": authorID }
@@ -376,14 +383,14 @@ def process_editor(db, tokens):
     cursor = db.get_cursor()
 
     if command == 'status':
-        status_editor(db, db.user_id)
+        status_editor(db, db.get_user_id())
 
     elif command == 'assign' and len(tokens) == 3:
-        manuscript_num = tokens[1]
+        manuscriptID = tokens[1]
         reviewer_id = tokens[2]
 
         # check to make sure that RICode matches
-        getManuscriptRICode = "SELECT ricodeID FROM manuscript WHERE manuscriptID = " + str(manuscript_num) + ';'
+        getManuscriptRICode = "SELECT ricodeID FROM manuscript WHERE manuscriptID = " + str(manuscriptID) + ';'
         manuscriptRICode    = get_single_query(db, getManuscriptRICode)
 
         getReviewerRICodes  = "SELECT RICode_RICodeID  from reviewer_has_RICode WHERE reviewer_personID = " + str(reviewer_id) + ';'
@@ -408,7 +415,7 @@ def process_editor(db, tokens):
                             "(%(manuscriptID)s, %(reviewer_personID)s, NULL, NULL, NULL, NULL, NULL, %(dateReceived)s)")
 
             data_feedback = {
-                'manuscriptID': manuscript_num,
+                'manuscriptID': manuscriptID,
                 'reviewer_personID': reviewer_id,
                 'dateReceived': date,
             }
@@ -492,7 +499,7 @@ def submit_feedback(db, manuscript_num, appropriateness, clarity, methodology, c
 
     cursor = db.get_cursor()
 
-    getManuscripts = "SELECT manuscriptID from manuscriptWReviewers WHERE reviewer_personID = " + str(db.user_id) + ';'
+    getManuscripts = "SELECT manuscriptID from manuscriptWReviewers WHERE reviewer_personID = " + str(db.get_user_id()) + ';'
     cursor.execute(getManuscripts)
 
     manuscripts = []
@@ -526,7 +533,7 @@ def submit_feedback(db, manuscript_num, appropriateness, clarity, methodology, c
             'recommendation': recommendation,
             'dateReceived': date,
             'manuscriptID': manuscript_num,
-            'reviewer_personID': db.user_id
+            'reviewer_personID': db.get_user_id()
         }
 
         insert_query(db, update_feedback, data_feedback)
@@ -551,14 +558,14 @@ def process_reviewer(db, tokens):
     command = tokens[0]
 
     if command == 'status' and len(tokens) == 1:
-        status_reviewer(db, db.user_id)
+        status_reviewer(db, db.get_user_id())
 
     elif command == 'resign' and len(tokens) == 1:
         # prompt to enter unique ID
         s = raw_input('Please enter your user ID to confirm: ')
-        if s == str(db.user_id):
+        if s == str(db.get_user_id()):
             # UPDATE reviewer SET reviewer_status = "resigned" WHERE personID = 416;
-            query = "UPDATE reviewer SET reviewer_status = 'resigned' WHERE personID = " + str(db.user_id) + ';'
+            query = "UPDATE reviewer SET reviewer_status = 'resigned' WHERE personID = " + str(db.get_user_id()) + ';'
             change_query(db, query)
 
             print("Thank you for your service!")
