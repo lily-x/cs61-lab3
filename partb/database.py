@@ -2,17 +2,19 @@
 # CS 61 Databases
 # Lab 3 part b
 # May 25, 2017
-
-
+import pymongo
 from pymongo import MongoClient
 
 
 class Database:
-    def __init__(self, team_name):
+    def __init__(self, HOST):
         # initialize db connection
-        client = MongoClient()
+        connection = pymongo.MongoClient(HOST)
+        connection.server_info()
 
-        self.client = client[team_name]
+        self.client = connection.Team28DB
+
+        # self.client = client[team_name]
 
         self.logged_in = False          # boolean: whether anyone is logged in
         self.user_id   = -1             # int: current user id
