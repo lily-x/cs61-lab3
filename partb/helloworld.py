@@ -19,6 +19,8 @@ coll = db.person
 
 result = coll.find( {"type": "editor"})
 
+editors
+
 for x in result:
     print str(x)
 
