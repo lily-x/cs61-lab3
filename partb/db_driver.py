@@ -1,37 +1,23 @@
 # Barry Yang and Lily Xu
 # CS 61 Databases
-# Lab 2 part e
-# May 12, 2017
+# Lab 3 part b
+# May 25, 2017
 
 
-from __future__ import print_function       # make print a function
-import traceback                            # for error handling
-import sys                                  # for misc errors
-import mysql.connector                      # mysql functionality
+# import traceback                            # for error handling
+# import sys                                  # for misc errors
 
+from pymongo import MongoClient
 from database import Database
 from db_functions import *
 
-SERVER    = "sunapee.cs.dartmouth.edu"      # db server to connect to
-USERNAME  = "byang"                         # user to connect as
-PASSWORD  = "7webster"                      # user's password
-DATABASE  = "byang_db"                      # db to user
+
+TEAM_NAME = 'Team28DB'
 
 if __name__ == "__main__":
-    db = Database(SERVER, USERNAME, PASSWORD, DATABASE, confidential=True)
+    db = Database(TEAM_NAME)
 
     print("Connection established.\n")
-
-
-    # if confidentiality is set, request and store a master key
-    if db.is_confidential():
-        # prompt user to enter a master key
-        print("Please enter the master key used for encryption:")
-        key = raw_input('--> ')
-
-        # store master key in MySQL
-        query = 'SET @master_key = HEX("' + key + '");'
-        get_cursor_results(db,query)
 
 
     # prompt user for request
@@ -52,13 +38,6 @@ if __name__ == "__main__":
             traceback.print_exc()
 
         s = raw_input('--> ')
-
-
-    # cleanup
-    try:
-        db.cleanup()
-    except:
-        print("Unexpected error: {0}".format(sys.exc_info()[0]))
 
 
     print("\nConnection terminated.\n", end='')

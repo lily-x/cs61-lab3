@@ -1,19 +1,21 @@
 # Barry Yang and Lily Xu
 # CS 61 Databases
-# Lab 2 part e
-# May 12, 2017
+# Lab 3 part b
+# May 25, 2017
 
 # helper functions for database execution
 
 
 import datetime         # get current date
 import random
-import getpass          # raw_input substitute for passwords
 
 
+# TODO: add "insert new issue" as a test query
+
+# TODO: rename to get_client_results
 def get_cursor_results(db, query):
-    cursor = db.get_cursor()
-    cursor.execute(query)
+    client = db.get_client()
+    
 
     return cursor
 
@@ -106,10 +108,6 @@ def login(db, user_id):
     results = submit_query_return(db, query)
 
     if results != "":
-        if not login_authenticate(db, user_id):
-            print("Incorrect password.")
-            return
-
         results = submit_query_return(db, query)
         results = results.strip().split('|')
 
@@ -134,10 +132,6 @@ def login(db, user_id):
     results = submit_query_return(db, query)
 
     if results != '':
-        if not login_authenticate(db, user_id):
-            print("Incorrect password.")
-            return
-
         results = submit_query_return(db, query)
         results = results.strip().split('|')
 
@@ -161,10 +155,6 @@ def login(db, user_id):
     results = submit_query_return(db, query)
 
     if results != '':
-        if not login_authenticate(db, user_id):
-            print("Incorrect password.")
-            return
-
         results = submit_query_return(db, query)
         results = results.strip().split('|')
 
@@ -184,32 +174,6 @@ def login(db, user_id):
 
     # no user corresponds to given id
     print('ERROR: No user exists corresponding to ID ' + str(user_id) + '.')
-
-
-
-# returns True if authentication was successful
-# returns False otherwise
-# if no password is setup, returns True
-def login_authenticate(db, user_id):
-    # check if user has an associated password
-    query = 'SELECT * FROM credential WHERE personID = ' + str(user_id) + ';'
-
-    result = get_single_query(db,query)
-
-    # no associated password
-    if not result:
-        return True
-
-    # request login from user
-    print('Please enter your password:')
-    pw = getpass.getpass('-->')
-
-    # confirm validity of password
-    query = 'SELECT * FROM credential WHERE personID = ' + str(user_id) + \
-            ' AND AES_DECRYPT(pword, @master_key) = "' + pw + '";'
-    result = get_single_query(db,query)
-
-    return result != None
 
 
 
@@ -237,17 +201,6 @@ def register(db, tokens):
     else:
         print("ERROR: User type " + user_type + " is invalid.")
         return
-
-    # if the confidential setting is on, prompt for a password
-    if db.is_confidential():
-        print('Please enter a password.')
-        pw = getpass.getpass('-->')
-
-        query = 'INSERT INTO credential (personID, pword) VALUES (' + str(personID) + \
-                ', AES_ENCRYPT("' + pw + '",@master_key));'
-
-        change_query(db, query)
-        print('User registered successfully')
 
 
 def register_person(db, fname, lname):

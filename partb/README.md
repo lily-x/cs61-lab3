@@ -1,7 +1,7 @@
 Barry Yang and Lily Xu
 CS 61 Databases
-Lab 2 part e
-May 12, 2017
+Lab 3 part b
+May 25, 2017
 
 
 # Overview
