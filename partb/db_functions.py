@@ -12,57 +12,86 @@ import random
 
 # TODO: add "insert new issue" as a test query
 
-# TODO: rename to get_client_results
-def get_cursor_results(db, query):
+def insert(db, collection, query):
     client = db.get_client()
-    
+
+    result = client[collection].insert_one( query )
+
+    return result.inserted_id
+
+
+# returns None if query doesn't exist
+def find_one(db, collection, query):
+    client = db.get_client()
+
+    cursor = client[collection].find_one( query )
 
     return cursor
 
-def get_single_query(db, query):
-    cursor = db.get_cursor()
-    cursor.execute(query)
+def find(db, collection, query):
+    client = db.get_client()
 
-    to_return = None
-    for row in cursor:
-        for col in row:
-            to_return = col
+    cursor = client[collection].find()
 
-    return to_return
+    return cursor
 
-# process query, but instead of displaying to user,
-# return output to the caller
-# NOTE: each column is delimited by a pipe '|'
-#       each row is delimited by a newline '\n'
-def submit_query_return(db, query):
-    cursor = db.get_cursor()
-    cursor.execute(query)
+def remove(db, collection, query):
+    result = db.collection.delete_many( query )
 
-    output = ''
-
-    # display results
-    for row in cursor:
-        for col in row:
-            output += str(col) + '|'
-        output = output[:-1] + '\n'
-
-    return output
+    return result
 
 
-def insert_query(db, query, data):
-    con    = db.get_con()
-    cursor = db.get_cursor()
-    cursor.execute(query, data)
-    con.commit()
-
-    return cursor.lastrowid
-
-# single query, useful for update and delete
-def change_query(db, query):
-    con     = db.get_con()
-    cursor  = db.get_cursor()
-    cursor.execute(query)
-    con.commit()
+# TODO: rename to get_client_results
+# def get_cursor_results(db, query):
+#     client = db.get_client()
+#
+#
+#     return cursor
+#
+# def get_single_query(db, query):
+#     cursor = db.get_cursor()
+#     cursor.execute(query)
+#
+#     to_return = None
+#     for row in cursor:
+#         for col in row:
+#             to_return = col
+#
+#     return to_return
+#
+# # process query, but instead of displaying to user,
+# # return output to the caller
+# # NOTE: each column is delimited by a pipe '|'
+# #       each row is delimited by a newline '\n'
+# def submit_query_return(db, query):
+#     cursor = db.get_cursor()
+#     cursor.execute(query)
+#
+#     output = ''
+#
+#     # display results
+#     for row in cursor:
+#         for col in row:
+#             output += str(col) + '|'
+#         output = output[:-1] + '\n'
+#
+#     return output
+#
+#
+# def insert_query(db, query, data):
+#     con    = db.get_con()
+#     cursor = db.get_cursor()
+#     cursor.execute(query, data)
+#     con.commit()
+#
+#     return cursor.lastrowid
+#
+# # single query, useful for update and delete
+# def change_query(db, query):
+#     con     = db.get_con()
+#     cursor  = db.get_cursor()
+#     cursor.execute(query)
+#     con.commit()
 
 
 # parse input from user
@@ -105,73 +134,71 @@ def login(db, user_id):
     user_id = int(user_id)
 
     # is the user an author?
-    query = "SELECT fname, lname, address FROM author JOIN person ON author.personID " + \
-            "= person.personID WHERE author.personID = " + str(user_id) + ';'
+    query = { "personID": user_id, "type": "author" }
 
-    results = submit_query_return(db, query)
+    result = find_one(db, "person", query)
 
-    if results != "":
-        results = submit_query_return(db, query)
-        results = results.strip().split('|')
+    if result:     # if not none
+        fname = result.get("fname")
+        lname = result.get("lname")
+        address = result.get("address")
 
         print("\nWelcome back, author " + str(user_id) + "! Here's what we have stored about you:")
-        print("  First name: " + results[0])
-        print("  Last name:  " + results[1])
-        print("  Address:    " + results[2])
+        print("  First name: " + fname)
+        print("  Last name:  " + lname)
+        print("  Address:    " + address)
 
         # execute login
-        db.change_user_id(int(user_id))
-        db.change_user_type('author')
-        db.log_on()
-
-        status_author(db, user_id)
+        # db.change_user_id(int(user_id))
+        # db.change_user_type('author')
+        # db.log_on()
+        #
+        # status_author(db, user_id)
 
         return
 
     # is the user an editor?
-    query = "SELECT fname, lname FROM editor JOIN person ON editor.personID " + \
-            "= person.personID WHERE editor.personID = " + str(user_id) + ';'
+    query = { "personID": user_id, "type": "editor" }
 
-    results = submit_query_return(db, query)
+    result = find_one(db, "person", query)
 
-    if results != '':
-        results = submit_query_return(db, query)
-        results = results.strip().split('|')
+    if result:
+        fname = result.get("fname")
+        lname = result.get("lname")
 
         print("\nWelcome back, editor " + str(user_id) + "! Here's what we have stored about you:")
-        print("  First name: " + results[0])
-        print("  Last name:  " + results[1])
+        print("  First name: " + fname)
+        print("  Last name:  " + lname)
 
         # execute login
-        db.change_user_id(int(user_id))
-        db.change_user_type('editor')
-        db.log_on()
-
-        status_editor(db, user_id)
+        # db.change_user_id(int(user_id))
+        # db.change_user_type('editor')
+        # db.log_on()
+        #
+        # status_editor(db, user_id)
 
         return
 
     # is the user a reviewer?
-    query = "SELECT fname, lname FROM reviewer JOIN person ON reviewer.personID " + \
-            "= person.personID WHERE reviewer.personID = "+ str(user_id) + ';'
+    query = { "personID": user_id, "type": "reviewer" }
 
-    results = submit_query_return(db, query)
+    result = find_one(db, "person", query)
 
-    if results != '':
-        results = submit_query_return(db, query)
-        results = results.strip().split('|')
+    if result:
+        fname = result.get("fname")
+        lname = result.get("lname")
 
         print("\nWelcome back, reviewer " + str(user_id) + "! Here's what we have stored about you:")
-        print("  First name: " + results[0])
-        print("  Last name:  " + results[1])
+        print("  First name: " + fname)
+        print("  Last name:  " + lname)
 
         # execute login
-        db.change_user_id(int(user_id))
-        db.change_user_type('reviewer')
-        db.log_on()
+        # db.change_user_id(int(user_id))
+        # db.change_user_type('reviewer')
+        # db.log_on()
 
         # TODO: everything should be limited to manuscripts assigned to that reviewer
-        status_reviewer(db, user_id)
+        # status_reviewer(db, user_id)
 
         return
 
@@ -185,7 +212,7 @@ def register(db, tokens):
     user_type = tokens[1]
 
     if user_type == 'author':
-        personID = register_author(db, tokens[2], tokens[3], tokens[4], tokens[5])
+        personID = register_author(db, tokens[2], tokens[3], tokens[4], tokens[5], tokens[6])
 
     elif user_type == 'editor':
         personID = register_editor(db, tokens[2], tokens[3])
@@ -206,90 +233,43 @@ def register(db, tokens):
         return
 
 
-def register_person(db, fname, lname):
-    add_person = ('INSERT INTO person (fname,lname) VALUES (%s, %s);')
+# get ID of next person
+def get_next_id(db, collection):
+    client = db.get_client()
+    coll = client[collection]
 
-    data_add = (fname, lname)
-
-    personID = insert_query(db, add_person, data_add)
-
-    print("{} {} will be registered with ID {} ".format(fname, lname, str(personID)))
-
-    return personID
+    for item in coll.find().sort("personID", -1).limit(1):
+        return item.get("personID") + 1
 
 
-def register_author(db, fname, lname, email, address):
-    personID = register_person(db, fname, lname)
+def register_author(db, fname, lname, email, address, affiliation):
+    personID = get_next_id(db, "person")
 
-    add_author = ("INSERT INTO author "
-                  "(personID,email,address,affiliation) "
-                  "VALUES (%(personID)s, %(email)s, %(address)s, NULL)")
+    query = { "personID": personID, "fname": fname, "lname": lname, "type": "author", "email": email, "address": address, "affiliation": affiliation }
 
-    data_author = {
-        'personID': personID,
-        'email': email,
-        'address': address,
-    }
-
-    insert_query(db, add_author, data_author)
+    result = insert(db, "person", query)
 
     return personID
 
 
 def register_editor(db, fname, lname):
-    personID = register_person(db, fname, lname)
+    personID = get_next_id(db, "person")
 
-    add_editor = ("INSERT INTO editor "
-                  "(personID) "
-                  "VALUES (%(personID)s)")
+    query = { "personID": personID, "fname": fname, "lname": lname, "type": "editor" }
 
-    data_editor = {
-        'personID': personID
-    }
-
-    insert_query(db, add_editor, data_editor)
+    result = insert(db, "person", query)
 
     return personID
 
 
 def register_reviewer(db, fname, lname, email, affiliation, *ricodes):
-    personID = register_person(db, fname, lname)
+    personID = get_next_id(db, "person")
 
-    add_reviewer = ("INSERT INTO reviewer "
-                    "(personID,affiliation,email) "
-                    "VALUES (%(personID)s, %(affiliation)s, %(email)s)")
+    query = { "personID": personID, "fname": fname, "lname": lname, "type": "reviewer", "affiliation": affiliation, "email": email, "reviewer_status": "active", "riCodeID": ricodes }
 
-    data_reviewer = {
-        'personID': personID,
-        'affiliation': affiliation,
-        'email': email,
-    }
-
-    insert_query(db, add_reviewer, data_reviewer)
-
-    for ricode in ricodes:
-        add_reviewerRICode = ("INSERT INTO reviewer_has_RICode "
-                              "(reviewer_personID,RICode_RICodeID) "
-                              "VALUES (%(reviewer_personID)s, %(RICode_RICodeID)s)")
-        data_reviewerRICode = {
-            'reviewer_personID': personID,
-            'RICode_RICodeID': ricode,
-        }
-        insert_query(db, add_reviewerRICode, data_reviewerRICode)
+    result = insert(db, "person", query)
 
     return personID
-
-
-def insert_secondaryAuthors(manuscript_id, name, order):
-    names = name.split()
-
-    add_SA = ("INSERT INTO secondaryAuthor "
-              "(manuscriptID, authorOrder, fname, lname) "
-              "VALUES (%s, %s, %s, %s)")
-
-    data_SA = (manuscript_id, order, names[0], names[1])
-
-    return add_SA, data_SA
 
 
 def process_author(db, tokens):
@@ -352,13 +332,13 @@ def process_author(db, tokens):
 
 
         # add secondary authors (if any)
-        i = 1
-        num_secondary_authors = len(tokens) - 4
-
-        while i <= num_secondary_authors:
-            add_SA, data_SA = insert_secondaryAuthors(manuscript_id, tokens[i+3], i)
-            insert_query(db, add_SA, data_SA)
-            i += 1
+        # i = 1
+        # num_secondary_authors = len(tokens) - 4
+        #
+        # while i <= num_secondary_authors:
+        #     add_SA, data_SA = insert_secondaryAuthors(manuscript_id, tokens[i+3], i)
+        #     insert_query(db, add_SA, data_SA)
+        #     i += 1
 
 
     # immediately remove manuscript, regardless of status
@@ -394,8 +374,8 @@ def process_author(db, tokens):
 def process_editor(db, tokens):
     command = tokens[0]
 
-    now     = datetime.datetime.now()
-    cursor  = db.get_cursor()
+    now    = datetime.datetime.now()
+    cursor = db.get_cursor()
 
     if command == 'status':
         status_editor(db, db.user_id)
@@ -514,7 +494,7 @@ def submit_feedback(db, manuscript_num, appropriateness, clarity, methodology, c
 
     cursor = db.get_cursor()
 
-    getManuscripts  = "SELECT manuscriptID from manuscriptWReviewers WHERE reviewer_personID = " + str(db.user_id) + ';'
+    getManuscripts = "SELECT manuscriptID from manuscriptWReviewers WHERE reviewer_personID = " + str(db.user_id) + ';'
     cursor.execute(getManuscripts)
 
     manuscripts = []

@@ -9,9 +9,26 @@ coll = db.manuscript
 
 print(coll.find_one( {"manuscriptID": 1} ).get("title"))
 
+coll = db.person
+
+
+# result = coll.find( {personID: {$gt:300} })
+# for person in coll.find({"personID": {"$gt": 300 }}):
+#   pprint.pprint(person)
+
+
+result = coll.find_one( {"personID": 300, "type": "author"})
+
+
+
+print("person is " + str(result))
+
+
+
+
 # print(db.collection_names(include_system_collections=False))
 
-arr = []
-for obj in coll.find():
-    arr.append(obj['manuscriptID'])
-print arr
+# arr = []
+# for obj in coll.find():
+#     arr.append(obj['manuscriptID'])
+# print arr

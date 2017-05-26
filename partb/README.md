@@ -37,7 +37,7 @@ login|<id>
 ```
 Register a new author
 ```
-register|author|<fname>|<lname>|<email>|<address>
+register|author|<fname>|<lname>|<email>|<address>|<affiliation>
 ```
 Register a new editor
 ```
@@ -122,5 +122,3 @@ accept|<manuscriptID>|<appropriateness>|<clarity>|<methodology>|<contribution>
 - Does not accept RICodes outside what was provided by the professor
 - To switch users, we must log out
 - For extra, inserted data cannot be used
-
-

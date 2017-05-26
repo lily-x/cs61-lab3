@@ -4,8 +4,8 @@
 # May 25, 2017
 
 
-# import traceback                            # for error handling
-# import sys                                  # for misc errors
+import traceback                            # for error handling
+import sys                                  # for misc errors
 
 from pymongo import MongoClient
 from database import Database
@@ -37,4 +37,4 @@ if __name__ == "__main__":
         s = raw_input('--> ')
 
 
-    print("\nConnection terminated.\n", end='')
+    print("\nConnection terminated.\n")
