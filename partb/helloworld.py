@@ -5,13 +5,22 @@ from pymongo import MongoClient
 client = MongoClient()
 
 db = client['Team28DB']
-coll = db.manuscript
 
-print(coll.find_one( {"manuscriptID": 1} ).get("title"))
 
-# print(db.collection_names(include_system_collections=False))
+# coll = db.manuscript
 
-arr = []
-for obj in coll.find():
-    arr.append(obj['manuscriptID'])
-print arr
+# print(coll.find_one( {"manuscriptID": 1} ).get("title"))
+
+# # print(db.collection_names(include_system_collections=False))
+
+# arr = []
+# for obj in coll.find():
+#     arr.append(obj['manuscriptID'])
+# print arr
+
+
+coll = db.reviewer
+
+query = { "personID": 300 }
+result = coll.find_one( query )
+print (result)

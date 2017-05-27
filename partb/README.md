@@ -19,9 +19,9 @@ Our management system consists of:
 
 Execute `setup.sql` to create the tables, views, triggers, and insert initial data.
 
-To run the front-end application, execute `db_driver.py` by entering the following in the command line:
+Note that Python 3 and a Python Driver for MongoDB are required to run our code. To run the front-end application, execute `db_driver.py` by entering the following in the command line:
 ```
-python db_driver.py
+python3 db_driver.py
 ```
 
 The user may then type in any valid command, which are explained below. The program will continue to run indefinitely until the user inputs 'q' or 'quit' to exit the management system.

@@ -11,11 +11,11 @@ from database import Database
 from db_functions import *
 
 
-# TEAM_NAME = 'Team28DB'
-HOST       = "mongodb://Team28:NMYFQgRPYTQd5MgT@cluster0-shard-00-00-ppp7l.mongodb.net:27017,cluster0-shard-00-01-ppp7l.mongodb.net:27017,cluster0-shard-00-02-ppp7l.mongodb.net:27017/Team28DB?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
+HOST = "mongodb://Team28:NMYFQgRPYTQd5MgT@cluster0-shard-00-00-ppp7l.mongodb.net:27017,cluster0-shard-00-01-ppp7l.mongodb.net:27017,cluster0-shard-00-02-ppp7l.mongodb.net:27017/Team28DB?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
+TEAM = 'Team28DB'
 
 if __name__ == "__main__":
-    db = Database(HOST)
+    db = Database(HOST, TEAM)
 
     print("Connection established.\n")
 

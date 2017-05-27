@@ -16,6 +16,8 @@ except pymongo.errors.ServerSelectionTimeoutError as err:
     print("Connection failure:")
     print(err)
 
+
+
 # Fetch list of all databases
 print('DB\'s present on the system:')
 for dbn in connection.database_names():
@@ -37,4 +39,20 @@ try:
 except Exception as e:
     print("Error trying to read collection:", type(e), e)
 
+
+# display array result
+coll = db.person
+
+print("\ntesting whether reviewer returns an array")
+query = { "personID": 300 }
+result = coll.find_one( query )
+RICodes = result.get("ricodeID")
+for i in RICodes:
+    print(i)
+
+
+
 print("\nConnection closed.")
+
+
+
