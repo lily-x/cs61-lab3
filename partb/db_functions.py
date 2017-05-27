@@ -12,7 +12,7 @@ import random
 
 # TODO: add "insert new issue" as a test query
 
-
+# insert specified query
 def insert(db, collection, query):
     client = db.get_client()
 
@@ -30,6 +30,7 @@ def find_one(db, collection, query):
     return cursor
 
 
+# find all corresponding entries
 def find(db, collection, query):
     client = db.get_client()
 
@@ -47,65 +48,13 @@ def update(db, collection, select, query):
     return cursor
 
 
+# delete all corresponding entries
 def delete(db, collection, query):
     client = db.get_client()
 
     result = client[collection].delete_many( query )
 
     return result
-
-
-# TODO: rename to get_client_results
-# def get_cursor_results(db, query):
-#     client = db.get_client()
-#
-#
-#     return cursor
-#
-# def get_single_query(db, query):
-#     cursor = db.get_cursor()
-#     cursor.execute(query)
-#
-#     to_return = None
-#     for row in cursor:
-#         for col in row:
-#             to_return = col
-#
-#     return to_return
-#
-# # process query, but instead of displaying to user,
-# # return output to the caller
-# # NOTE: each column is delimited by a pipe '|'
-# #       each row is delimited by a newline '\n'
-# def submit_query_return(db, query):
-#     cursor = db.get_cursor()
-#     cursor.execute(query)
-#
-#     output = ''
-#
-#     # display results
-#     for row in cursor:
-#         for col in row:
-#             output += str(col) + '|'
-#         output = output[:-1] + '\n'
-#
-#     return output
-#
-#
-# def insert_query(db, query, data):
-#     con    = db.get_con()
-#     cursor = db.get_cursor()
-#     cursor.execute(query, data)
-#     con.commit()
-#
-#     return cursor.lastrowid
-#
-# # single query, useful for update and delete
-# def change_query(db, query):
-#     con     = db.get_con()
-#     cursor  = db.get_cursor()
-#     cursor.execute(query)
-#     con.commit()
 
 
 # parse input from user
@@ -148,13 +97,12 @@ def login(db, user_id):
     user_id = int(user_id)
 
     # is the user an author?
-    query = { "personID": user_id, "type": "author" }
-
+    query  = { "personID": user_id, "type": "author" }
     result = find_one(db, "person", query)
 
     if result:     # if not none
-        fname = result.get("fname")
-        lname = result.get("lname")
+        fname   = result.get("fname")
+        lname   = result.get("lname")
         address = result.get("address")
 
         print("\nWelcome back, author " + str(user_id) + "! Here's what we have stored about you:")
@@ -172,8 +120,7 @@ def login(db, user_id):
         return
 
     # is the user an editor?
-    query = { "personID": user_id, "type": "editor" }
-
+    query  = { "personID": user_id, "type": "editor" }
     result = find_one(db, "person", query)
 
     if result:
@@ -194,8 +141,7 @@ def login(db, user_id):
         return
 
     # is the user a reviewer?
-    query = { "personID": user_id, "type": "reviewer" }
-
+    query  = { "personID": user_id, "type": "reviewer" }
     result = find_one(db, "person", query)
 
     if result:
@@ -211,7 +157,6 @@ def login(db, user_id):
         db.change_user_type('reviewer')
         db.log_on()
 
-        # TODO: everything should be limited to manuscripts assigned to that reviewer
         status_reviewer(db, user_id)
 
         return
@@ -226,10 +171,16 @@ def register(db, tokens):
     user_type = tokens[1]
 
     if user_type == 'author':
-        personID = register_author(db, tokens[2], tokens[3], tokens[4], tokens[5], tokens[6])
+        if len(tokens) == 7:
+            personID = register_author(db, tokens[2], tokens[3], tokens[4], tokens[5], tokens[6])
+        else: 
+            print("ERROR: Invaild input. Incorrect number of arguments.")
 
     elif user_type == 'editor':
-        personID = register_editor(db, tokens[2], tokens[3])
+        if len(tokens) == 4:
+            personID = register_editor(db, tokens[2], tokens[3])
+        else: 
+            print("ERROR: Invaild input. Incorrect number of arguments.")
 
     elif user_type == 'reviewer':
         if len(tokens) == 7:
@@ -239,27 +190,33 @@ def register(db, tokens):
         elif len(tokens) == 9:
             personID = register_reviewer(db, tokens[2], tokens[3], tokens[4], tokens[5], tokens[6], tokens[7], tokens[8])
         else:
-            print("ERROR: Invalid input. Too many arguments.")
-            return
+            print("ERROR: Invalid input. Incorrect number of arguments.")
 
     else:
         print("ERROR: User type " + user_type + " is invalid.")
-        return
 
 
-# get ID of next person
+# get ID of next item in collection
 def get_next_id(db, collection):
     client = db.get_client()
     coll = client[collection]
 
     for item in coll.find().sort(collection + "ID", -1).limit(1):
-        return item.get("personID") + 1
+        return item.get(collection + "ID") + 1
 
 
 def register_author(db, fname, lname, email, address, affiliation):
     personID = get_next_id(db, "person")
 
-    query = { "personID": personID, "fname": fname, "lname": lname, "type": "author", "email": email, "address": address, "affiliation": affiliation }
+    query = { 
+        "personID": personID, 
+        "fname": fname, 
+        "lname": lname, 
+        "type": "author", 
+        "email": email, 
+        "address": address, 
+        "affiliation": affiliation 
+    }
 
     result = insert(db, "person", query)
 
@@ -269,7 +226,12 @@ def register_author(db, fname, lname, email, address, affiliation):
 def register_editor(db, fname, lname):
     personID = get_next_id(db, "person")
 
-    query = { "personID": personID, "fname": fname, "lname": lname, "type": "editor" }
+    query = { 
+        "personID": personID, 
+        "fname": fname, 
+        "lname": lname, 
+        "type": "editor" 
+    }
 
     result = insert(db, "person", query)
 
@@ -279,7 +241,16 @@ def register_editor(db, fname, lname):
 def register_reviewer(db, fname, lname, email, affiliation, *ricodes):
     personID = get_next_id(db, "person")
 
-    query = { "personID": personID, "fname": fname, "lname": lname, "type": "reviewer", "affiliation": affiliation, "email": email, "reviewer_status": "active", "riCodeID": ricodes }
+    query = { 
+        "personID": personID, 
+        "fname": fname, 
+        "lname": lname, 
+        "type": "reviewer", 
+        "affiliation": affiliation, 
+        "email": email, 
+        "reviewer_status": "active", 
+        "riCodeID": ricodes 
+    }
 
     result = insert(db, "person", query)
 
@@ -319,23 +290,23 @@ def process_author(db, tokens):
         # secondary authors (if any)
         secondary_authors = tokens[4:]
 
-
-        query = { "manuscriptID": manuscriptID,
-                  "authorID": authorID,
-                  "editorID": editor_id,
-                  "title": title,
-                  "status": "underReview",
-                  "ricodeID": RICode,
-                  "numPages": None,
-                  "startingPage": None,
-                  "issueOrder": None,
-                  "dateReceived": "2014-03-21",
-                  "dateSentForReview": None,
-                  "dateAccepted": None,
-                  "issue_publicationYear": None,
-                  "issue_periodNumber": None,
-                  "secondaryAuthor": secondary_authors
-              }
+        query = { 
+            "manuscriptID": manuscriptID,
+            "authorID": authorID,
+            "editorID": editor_id,
+            "title": title,
+            "status": "underReview",
+            "ricodeID": RICode,
+            "numPages": None,
+            "startingPage": None,
+            "issueOrder": None,
+            "dateReceived": "2014-03-21",
+            "dateSentForReview": None,
+            "dateAccepted": None,
+            "issue_publicationYear": None,
+            "issue_periodNumber": None,
+            "secondaryAuthor": secondary_authors
+        }
 
         insert(db, "manuscript", query)
 
@@ -389,7 +360,7 @@ def process_editor(db, tokens):
 
     elif command == 'assign' and len(tokens) == 3:
         manuscriptID = tokens[1]
-        reviewerID = tokens[2]
+        reviewerID   = tokens[2]
 
         # check to make sure that reviewer has a corresponding RICode
         query    = { "manuscriptID": manuscriptID }
@@ -403,15 +374,15 @@ def process_editor(db, tokens):
         # reviewer does have a corresponding RICode
         if m_RIcode in r_RICodes:
             query = { 
-                        "manuscriptID": manuscriptID,
-                        "reviewerID": reviewerID,
-                        "appropriateness": None,
-                        "clarity": None,
-                        "methodology": None,
-                        "contribution": None,
-                        "recommendation": None,
-                        "dateReceived": None 
-                    }
+                "manuscriptID": manuscriptID,
+                "reviewerID": reviewerID,
+                "appropriateness": None,
+                "clarity": None,
+                "methodology": None,
+                "contribution": None,
+                "recommendation": None,
+                "dateReceived": None 
+            }
 
             insert(db, "feedback", query)
 
@@ -471,7 +442,7 @@ def process_editor(db, tokens):
             page_sum += int(row)
 
 
-        query = { "manuscriptID": manuscriptID }
+        query  = { "manuscriptID": manuscriptID }
         result = find_one(db, "manuscript", query)
 
         page = int(result.get("numPages"))
@@ -516,7 +487,6 @@ def process_editor(db, tokens):
 
 
 def submit_feedback(db, manuscriptID, appropriateness, clarity, methodology, contribution, recommendation, new_status = None):
-
     manuscriptID = int(manuscriptID)
     reviewerID = int(db.get_user_id)
 
