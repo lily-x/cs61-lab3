@@ -355,7 +355,6 @@ def process_editor(db, tokens):
     command = tokens[0]
 
     now    = datetime.datetime.now()
-    cursor = db.get_cursor()
 
     if command == 'status':
         status_editor(db, db.get_user_id())
@@ -429,6 +428,19 @@ def process_editor(db, tokens):
         update(db, "manuscript", select, query)
 
         print("Manuscript {} status set to 'typeset' on {}. {} pages logged").format(manuscriptID, now.strftime("%Y-%m-%d"), pp)
+
+    elif command == 'issue' and len(tokens) == 3:
+        publicationYear = int(tokens[1])
+        periodNumber    = int(tokens[2])
+
+        query = {
+            "publicationYear": publicationYear,
+            "periodNumber": periodNumber
+        }
+
+        insert(db, "issue", query)
+
+        print("Issue with publication year {} and period number {} has been created.").format(publicationYear, periodNumber)
 
     elif command == 'schedule' and len(tokens) == 4:
         manuscriptID = tokens[1]
@@ -638,8 +650,14 @@ def status_editor(db, editor_id):
 def status_reviewer(db, reviewerID):
     query = { "reviewerID": reviewerID }
 
-    # TODO: fix this because right now no good way to link reviewer and manuscript
-    display_manuscripts(db, query)
+    # the first cursor finds all the feedbacks affiliated with the reviewer
+    # we want the manuscriptID
+    cursor = find(db, "feedback", query)
+    for result in cursor:
+
+        manuscriptID = result.get("manuscriptID")
+        manuscriptQuery = {"manuscriptID": manuscriptID}
+        display_manuscripts(db, manuscriptQuery)
 
 
 def display_manuscripts(db, query):
