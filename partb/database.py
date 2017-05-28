@@ -43,7 +43,7 @@ class Database:
     def log_on(self):
         self.logged_in = True
 
-    def log_off(self):
+    def log_out(self):
         self.logged_in = False
         self.user_id = -1
         self.user_type = ""

@@ -2,7 +2,7 @@
 // CS 61 Lab 2a
 // May 21, 2017
 
-// Test queries for the JERK research journal manuscript data management system. 
+// Test queries for the JERK research journal manuscript data management system.
 // MongoDB schema implementation
 
 
