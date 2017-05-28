@@ -169,17 +169,18 @@ def login(db, user_id):
 # register a new user in the system
 def register(db, tokens):
     user_type = tokens[1]
+    personID = None
 
     if user_type == 'author':
         if len(tokens) == 7:
             personID = register_author(db, tokens[2], tokens[3], tokens[4], tokens[5], tokens[6])
-        else: 
+        else:
             print("ERROR: Invaild input. Incorrect number of arguments.")
 
     elif user_type == 'editor':
         if len(tokens) == 4:
             personID = register_editor(db, tokens[2], tokens[3])
-        else: 
+        else:
             print("ERROR: Invaild input. Incorrect number of arguments.")
 
     elif user_type == 'reviewer':
@@ -195,6 +196,8 @@ def register(db, tokens):
     else:
         print("ERROR: User type " + user_type + " is invalid.")
 
+    return personID
+
 
 # get ID of next item in collection
 def get_next_id(db, collection):
@@ -208,17 +211,17 @@ def get_next_id(db, collection):
 def register_author(db, fname, lname, email, address, affiliation):
     personID = get_next_id(db, "person")
 
-    query = { 
-        "personID": personID, 
-        "fname": fname, 
-        "lname": lname, 
-        "type": "author", 
-        "email": email, 
-        "address": address, 
-        "affiliation": affiliation 
+    query = {
+        "personID": personID,
+        "fname": fname,
+        "lname": lname,
+        "type": "author",
+        "email": email,
+        "address": address,
+        "affiliation": affiliation
     }
 
-    result = insert(db, "person", query)
+    insert(db, "person", query)
 
     return personID
 
@@ -226,14 +229,14 @@ def register_author(db, fname, lname, email, address, affiliation):
 def register_editor(db, fname, lname):
     personID = get_next_id(db, "person")
 
-    query = { 
-        "personID": personID, 
-        "fname": fname, 
-        "lname": lname, 
-        "type": "editor" 
+    query = {
+        "personID": personID,
+        "fname": fname,
+        "lname": lname,
+        "type": "editor"
     }
 
-    result = insert(db, "person", query)
+    insert(db, "person", query)
 
     return personID
 
@@ -241,18 +244,18 @@ def register_editor(db, fname, lname):
 def register_reviewer(db, fname, lname, email, affiliation, *ricodes):
     personID = get_next_id(db, "person")
 
-    query = { 
-        "personID": personID, 
-        "fname": fname, 
-        "lname": lname, 
-        "type": "reviewer", 
-        "affiliation": affiliation, 
-        "email": email, 
-        "reviewer_status": "active", 
-        "riCodeID": ricodes 
+    query = {
+        "personID": personID,
+        "fname": fname,
+        "lname": lname,
+        "type": "reviewer",
+        "affiliation": affiliation,
+        "email": email,
+        "reviewer_status": "active",
+        "riCodeID": ricodes
     }
 
-    result = insert(db, "person", query)
+    insert(db, "person", query)
 
     return personID
 
@@ -290,7 +293,7 @@ def process_author(db, tokens):
         # secondary authors (if any)
         secondary_authors = tokens[4:]
 
-        query = { 
+        query = {
             "manuscriptID": manuscriptID,
             "authorID": authorID,
             "editorID": editor_id,
@@ -315,7 +318,7 @@ def process_author(db, tokens):
         update(db, "person", query_select, query)
 
         print("Submitted and updated:\n"
-              "  Manuscript ID is " + str(manuscript_id) + "\n"
+              "  Manuscript ID is " + str(manuscriptID) + "\n"
               "  Manuscript SUBMITTED on " + now.strftime("%Y-%m-%d") + " \n")
 
 
@@ -325,7 +328,7 @@ def process_author(db, tokens):
 
         # ensure that author can only retract his/her own manuscripts
         query = { "manuscriptID": manuscriptID, "authorID": authorID }
-        result = find_one(db, "manuscript", person)
+        result = find_one(db, "manuscript", query)
 
         if not result:
             print("Sorry, you are not the author of this manuscript.")
@@ -346,7 +349,6 @@ def process_author(db, tokens):
 
     else:
         print("ERROR: Invalid input. Command '" + command + "' not recognized.")
-
 
 
 def process_editor(db, tokens):
@@ -372,8 +374,8 @@ def process_editor(db, tokens):
         r_RICodes = result.get("ricodeID")
 
         # reviewer does have a corresponding RICode
-        if m_RIcode in r_RICodes:
-            query = { 
+        if m_RICode in r_RICodes:
+            query = {
                 "manuscriptID": manuscriptID,
                 "reviewerID": reviewerID,
                 "appropriateness": None,
@@ -381,7 +383,7 @@ def process_editor(db, tokens):
                 "methodology": None,
                 "contribution": None,
                 "recommendation": None,
-                "dateReceived": None 
+                "dateReceived": None
             }
 
             insert(db, "feedback", query)
@@ -392,17 +394,17 @@ def process_editor(db, tokens):
             update(db, "manuscript", select, query)
 
             print("Manuscript ID {} assigned to reviewer {}. Manuscript status set to 'underReview'.".format(manuscriptID, reviewerID))
-        
+
         # reviewer does not have a corresponding RICode
         else:
             print("ERROR: Invalid entry. This reviewer does not have the appropriate RICode.")
 
     elif command == 'reject' and len(tokens) == 2:
         manuscriptID = tokens[1]
-        
+
         select = { "manuscriptID": manuscriptID }
         query  = { "status": "rejected" }
-        
+
         update(db, "manuscript", select, query)
 
         print("Manuscript {} rejected on {}").format(manuscriptID, now.strftime("%Y-%m-%d"))
@@ -476,7 +478,7 @@ def process_editor(db, tokens):
         # update issue
         select = { "publicationYear": issueYear, "periodNumber": issuePeriod }
         query  = { "datePrinted": datetime.datetime.now().date() }
-        
+
         update(db, "issue", select, query)
 
         print("Issue year {}, period {} printed on {}. Status of all corresponding manuscripts changed to 'published'.").format(issueYear, issuePeriod, now.strftime("%Y-%m-%d"))
@@ -517,7 +519,9 @@ def submit_feedback(db, manuscriptID, appropriateness, clarity, methodology, con
         print("You cannot review manuscript {} at this time.").format(manuscriptID)
 
     # feedback successfully submitted
-    else: 
+    else:
+        select = { "manuscriptID": manuscriptID, "reviewerID": reviewerID }
+
         query = {
             "manuscriptID": manuscriptID,
             "reviewerID": reviewerID,
@@ -529,7 +533,7 @@ def submit_feedback(db, manuscriptID, appropriateness, clarity, methodology, con
             "dateReceived": datetime.datetime.now().date()
         }
 
-        update(db, "feedback", query)
+        update(db, "feedback", select, query)
 
         print("Feedback for manuscript {} recorded.").format(manuscriptID)
 
@@ -565,7 +569,7 @@ def process_reviewer(db, tokens):
             select = { "personID": reviewerID }
             query = { "status": "resigned" }
 
-            update(db, "person", select query)
+            update(db, "person", select, query)
 
             print("Thank you for your service!")
 
