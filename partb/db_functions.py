@@ -352,12 +352,8 @@ def process_author(db, tokens):
 
 def process_editor(db, tokens):
     command = tokens[0]
+    # now    = datetime.datetime.now()
 
-<<<<<<< HEAD
-    now    = datetime.datetime.now()
-
-=======
->>>>>>> c5369b62009915ae2d99f47e4b081948ee8300ed
     if command == 'status':
         status_editor(db, db.get_user_id())
 
@@ -637,17 +633,6 @@ def status_editor(db, editorID):
 
 def status_reviewer(db, reviewerID):
     query = { "reviewerID": reviewerID }
-
-<<<<<<< HEAD
-    # the first cursor finds all the feedbacks affiliated with the reviewer
-    # we want the manuscriptID
-    cursor = find(db, "feedback", query)
-    for result in cursor:
-
-        manuscriptID = result.get("manuscriptID")
-        manuscriptQuery = {"manuscriptID": manuscriptID}
-        display_manuscripts(db, manuscriptQuery)
-=======
     results = find(db, "feedback", query)
 
     # find all unique manuscripts linked to a reviewer
@@ -660,8 +645,6 @@ def status_reviewer(db, reviewerID):
     for manuscriptID in manuscripts:
         query = { "manuscriptID" : manuscriptID}
         display_manuscripts(db, query)
->>>>>>> c5369b62009915ae2d99f47e4b081948ee8300ed
-
 
 def display_manuscripts(db, query):
     result = find(db, "manuscript", query)
