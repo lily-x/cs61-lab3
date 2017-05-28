@@ -436,6 +436,9 @@ def process_editor(db, tokens):
         publicationYear = int(tokens[1])
         periodNumber    = int(tokens[2])
 
+        print(publicationYear)
+        print(periodNumber)
+
         query = {
             "publicationYear": publicationYear,
             "periodNumber": periodNumber
@@ -443,7 +446,7 @@ def process_editor(db, tokens):
 
         insert(db, "issue", query)
 
-        print("Issue with publication year {} and period number {} has been created.").format(publicationYear, periodNumber)
+        print("Issue with publication year {} and period number {} has been created.".format(publicationYear, periodNumber))
 
     elif command == 'schedule' and len(tokens) == 4:
         manuscriptID = int(tokens[1])
