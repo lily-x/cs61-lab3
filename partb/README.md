@@ -99,6 +99,10 @@ Publish a manuscript
 ```
 publish|<issue_year>|<issue_period>
 ```
+Create a new issue
+```
+issue|<issue_year>|<issue_period>
+```
 
 
 ### Reviewer

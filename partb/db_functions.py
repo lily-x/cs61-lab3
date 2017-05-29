@@ -8,6 +8,7 @@
 
 import datetime         # get current date
 import random
+import pprint
 
 
 # TODO: add "insert new issue" as a test query
@@ -26,6 +27,7 @@ def find_one(db, collection, query):
     client = db.get_client()
 
     cursor = client[collection].find_one( query )
+    #cursor =
 
     return cursor
 
@@ -371,12 +373,20 @@ def process_editor(db, tokens):
 
         m_RICode = result.get("ricodeID")
 
+        if(m_RICode is None):
+            print("ERROR: corresponding RICode not found")
+            return
+
         query     = { "personID": reviewerID }
         result    = find_one(db, "person", query)
         r_RICodes = result.get("ricodeID")
 
+        if(r_RICodes is None):
+            print("ERROR: corresponding RICode not found")
+            return
+
         # reviewer does have a corresponding RICode
-        if m_RICode in r_RICodes:
+        if int(m_RICode) in r_RICodes:
             query = {
                 "manuscriptID": manuscriptID,
                 "reviewerID": reviewerID,
@@ -452,6 +462,13 @@ def process_editor(db, tokens):
         manuscriptID = int(tokens[1])
         issueYear    = int(tokens[2])
         issuePeriod  = int(tokens[3])
+
+        query = {"publicationYear": issueYear, "periodNumber": issuePeriod}
+        result = find_one(db, "issue", query)
+
+        if (result is None):
+            print("No corresponding issue found. Cannot schedule")
+            return
 
         query = { "issue_publicationYear": issueYear, "issue_periodNumber": issuePeriod }
 
@@ -587,7 +604,7 @@ def process_reviewer(db, tokens):
         s = input('Please enter your user ID to confirm: ')
         if s == str(reviewerID):
             select = { "personID": reviewerID }
-            query = { "status": "resigned" }
+            query = { "reviewer_status": "resigned" }
 
             update(db, "person", select, query)
 
