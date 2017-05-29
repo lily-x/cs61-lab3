@@ -373,16 +373,16 @@ def process_editor(db, tokens):
 
         m_RICode = result.get("ricodeID")
 
-        if(m_RICode is None):
-            print("ERROR: corresponding RICode not found")
+        if not m_RICode:
+            print("ERROR: Reviewer does not have corresponding RICode.")
             return
 
         query     = { "personID": reviewerID }
         result    = find_one(db, "person", query)
         r_RICodes = result.get("ricodeID")
 
-        if(r_RICodes is None):
-            print("ERROR: corresponding RICode not found")
+        if not r_RICodes:
+            print("ERROR: Reviewer does not have corresponding RICode.")
             return
 
         # reviewer does have a corresponding RICode
@@ -466,8 +466,8 @@ def process_editor(db, tokens):
         query = {"publicationYear": issueYear, "periodNumber": issuePeriod}
         result = find_one(db, "issue", query)
 
-        if (result is None):
-            print("No corresponding issue found. Cannot schedule")
+        if not result:
+            print("No corresponding issue found. Cannot schedule manuscript.")
             return
 
         query = { "issue_publicationYear": issueYear, "issue_periodNumber": issuePeriod }
