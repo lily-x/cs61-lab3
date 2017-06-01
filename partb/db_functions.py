@@ -8,7 +8,6 @@
 
 import datetime         # get current date
 import random
-import pprint
 
 
 # TODO: add "insert new issue" as a test query
