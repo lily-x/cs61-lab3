@@ -55,7 +55,7 @@ status
 ```
 Register a new reviewer
 ```
-register|reviewer|<fname>|<lname>|<RICode1>|<RICode2>|<RICode3>
+register|reviewer|<fname>|<lname>|<email>|<affiliation>|<RICode1>|<RICode2>|<RICode3>
 ```
 
 
